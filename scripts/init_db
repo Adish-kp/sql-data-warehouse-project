@@ -1,0 +1,30 @@
+/*
+============================================================
+   Data Warehouse Database Creation Script
+   Database Name : DataWarehouseDB
+   Description   : Initializes the Data Warehouse database
+   Author        : Adish
+   ============================================================ 
+*/
+
+
+use master;
+GO
+
+IF EXISTS (SELECT 1 FROM sys.databases WHERE name = 'datawarehouse_project_db')
+BEGIN
+	ALTER DATABASE datawarehouse_Project SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+	DROP DATABASE datawarehouse_project_db;
+END;
+GO
+
+USE datawarehouse_project_db
+GO
+
+CREATE SCHEMA bronze;
+GO
+
+CREATE SCHEMA silver;
+GO
+
+CREATE SCHEMA gold;
