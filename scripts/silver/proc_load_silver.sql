@@ -45,11 +45,11 @@ BEGIN
 		cst_key,
 		TRIM(cst_firstnam) AS cst_firstname,
 		TRIM(cst_lastname) AS cst_lastname,
-		CASE WHEN UPPER(TRIM(cst_gndr)) = 'S' THEN 'Single'
-			WHEN UPPER(TRIM(cst_gndr)) = 'M' THEN 'Married'
+		CASE WHEN UPPER(TRIM(cst_marital_status)) = 'S' THEN 'Single'
+			WHEN UPPER(TRIM(cst_marital_status)) = 'M' THEN 'Married'
 			ELSE 'N/A'
 		END cst_marital_status,
-
+	
 		CASE WHEN UPPER(TRIM(cst_gndr)) = 'F' THEN 'Female'
 			WHEN UPPER(TRIM(cst_gndr)) = 'M' THEN 'Male'
 			ELSE 'N/A'
@@ -60,13 +60,14 @@ BEGIN
 			* ,
 			ROW_NUMBER() OVER (PARTITION BY cst_id ORDER BY cst_create_date DESC) as flag_last
 			FROM bronze.crm_cust_info
+			WHERE cst_id IS NOT NULL
 		)t WHERE flag_last = 1
 		SET @end_time = GETDATE();
 		PRINT '>> Load Duration: ' +CAST( DATEDIFF(second,@start_time,@end_time) AS NVARCHAR) + 'seconds';
 		print '------------------------';
-
-
-
+	
+	
+	
 		SET @start_time = GETDATE()
 		PRINT '----------------------------------------';
 		PRINT 'Loading CRM silver.crm_prd_info';
@@ -103,10 +104,10 @@ BEGIN
 		SET @end_time = GETDATE();
 		PRINT '>> Load Duration: ' +CAST( DATEDIFF(second,@start_time,@end_time) AS NVARCHAR) + 'seconds';
 		print '------------------------';
-
-
-
-
+	
+	
+	
+	
 		SET @start_time = GETDATE();
 		PRINT '----------------------------------------';
 		PRINT 'Loading CRM silver.crm_sales_details';
@@ -125,12 +126,12 @@ BEGIN
 			sls_quantity,
 			sls_price
 		)
-
+	
 		SELECT
 		sls_ord_num,
 		sls_prd_key,
 		sls_cust_id,
-
+	
 		CASE WHEN sls_order_dt = 0 OR LEN(sls_order_dt) != 8 THEN NULL
 			ELSE CAST(CAST(sls_order_dt AS VARCHAR)AS DATE)
 		END AS sls_order_dt,
@@ -153,9 +154,9 @@ BEGIN
 		SET @end_time = GETDATE();
 		PRINT '>> Load Duration: ' +CAST( DATEDIFF(second,@start_time,@end_time) AS NVARCHAR) + 'seconds';
 		print '------------------------';
-
-
-
+	
+	
+	
 		SET @start_time = GETDATE();
 		PRINT '----------------------------------------';
 		PRINT 'Loading ERP silver.erp_cst_az1';
@@ -164,7 +165,7 @@ BEGIN
 		TRUNCATE TABLE silver.erp_cust_az12;
 		PRINT '>> Insering data into : silver.erp_cust_az12';
 		INSERT INTO silver.erp_cust_az12(cid,bdate,gen)
-
+	
 		SELECT
 		CASE WHEN cid LIKE 'NAS%' THEN SUBSTRING(cid, 4, LEN(cid))
 			ELSE cid
@@ -180,10 +181,10 @@ BEGIN
 		SET @end_time = GETDATE();
 		PRINT '>> Load Duration: ' +CAST( DATEDIFF(second,@start_time,@end_time) AS NVARCHAR) + 'seconds';
 		print '------------------------';
-
-
-
-
+	
+	
+	
+	
 		SET @start_time = GETDATE();
 		PRINT '----------------------------------------';
 		PRINT 'Loading ERP silver.erp_LOC_A101';
@@ -203,9 +204,9 @@ BEGIN
 		SET @end_time = GETDATE();
 		PRINT '>> Load Duration: ' +CAST( DATEDIFF(second,@start_time,@end_time) AS NVARCHAR) + 'seconds';
 		print '------------------------';
-
-
-
+	
+	
+	
 		SET @start_time = GETDATE();
 		PRINT '----------------------------------------';
 		PRINT 'Loading ERP silver.erp_px_cat_g1v2';
